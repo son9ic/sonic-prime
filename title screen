@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Sonic Seasons</title>
+
+<style>
+body{
+    margin:0;
+    overflow:hidden;
+    background:black;
+    font-family:Arial, sans-serif;
+    color:white;
+    text-align:center;
+}
+
+#titleScreen{
+    position:absolute;
+    width:100%;
+    top:30%;
+}
+
+h1{
+    font-size:70px;
+    color:cyan;
+    text-shadow:0 0 20px blue;
+}
+
+#pressStart{
+    margin-top:30px;
+    font-size:30px;
+    animation:flash 1s infinite;
+}
+
+@keyframes flash{
+    0%{opacity:1;}
+    50%{opacity:0;}
+    100%{opacity:1;}
+}
+
+select{
+    margin-top:20px;
+    font-size:20px;
+    padding:5px;
+}
+</style>
+</head>
+
+<body>
+
+<div id="titleScreen">
+
+<h1 id="gameTitle">SONIC SEASONS</h1>
+
+<div id="pressStart">PRESS ENTER</div>
+
+<select id="languageSelect">
+    <option value="en">English</option>
+    <option value="es">Español</option>
+    <option value="fr">Français</option>
+    <option value="ko">한국어</option>
+    <option value="jp">日本語</option>
+</select>
+
+</div>
+
+<script>
+
+const translations = {
+
+    en:{
+        start:"PRESS ENTER"
+    },
+
+    es:{
+        start:"PRESIONA ENTER"
+    },
+
+    fr:{
+        start:"APPUYEZ SUR ENTRÉE"
+    },
+
+    ko:{
+        start:"엔터 키를 누르세요"
+    },
+
+    jp:{
+        start:"エンターキーを押してください"
+    }
+
+};
+
+const pressStart = document.getElementById("pressStart");
+const languageSelect = document.getElementById("languageSelect");
+
+languageSelect.addEventListener("change", () => {
+
+    const lang = languageSelect.value;
+
+    pressStart.textContent = translations[lang].start;
+
+});
+
+document.addEventListener("keydown", (event) => {
+
+    if(event.key === "Enter"){
+
+        alert("Starting Game!");
+
+        // Put your game start code here
+
+    }
+
+});
+
+</script>
+
+</body>
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Sonic Seasons - Void Title Screen</title>
+
+<style>
+
+body{
+    margin:0;
+    overflow:hidden;
+    background:black;
+    font-family:Arial, sans-serif;
+}
+
+canvas{
+    position:absolute;
+    top:0;
+    left:0;
+}
+
+#titleUI{
+    position:absolute;
+    width:100%;
+    top:35%;
+    text-align:center;
+    color:white;
+    z-index:2;
+}
+
+h1{
+    font-size:70px;
+    color:#7df9ff;
+    text-shadow:
+        0 0 10px #00ffff,
+        0 0 30px #7a00ff,
+        0 0 60px #7a00ff;
+}
+
+#pressStart{
+    margin-top:25px;
+    font-size:30px;
+    animation:flash 1s infinite;
+}
+
+@keyframes flash{
+    0%{opacity:1;}
+    50%{opacity:0;}
+    100%{opacity:1;}
+}
+
+</style>
+</head>
+
+<body>
+
+<canvas id="bg"></canvas>
+
+<div id="titleUI">
+    <h1>SONIC SEASONS</h1>
+    <div id="pressStart">PRESS ENTER</div>
+</div>
+
+<script>
+
+const canvas = document.getElementById("bg");
+const ctx = canvas.getContext("2d");
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let shards = [];
+
+class Shard{
+
+    constructor(){
+
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+
+        this.size = Math.random() * 12 + 6;
+
+        this.speedX = (Math.random() - 0.5) * 1.5;
+        this.speedY = (Math.random() - 0.5) * 1.5;
+
+        this.rotation = Math.random() * 360;
+        this.rotationSpeed = (Math.random() - 0.5) * 2;
+
+        this.opacity = Math.random() * 0.5 + 0.3;
+    }
+
+    update(){
+
+        this.x += this.speedX;
+        this.y += this.speedY;
+
+        this.rotation += this.rotationSpeed;
+
+        if(this.x > canvas.width) this.x = 0;
+        if(this.x < 0) this.x = canvas.width;
+
+        if(this.y > canvas.height) this.y = 0;
+        if(this.y < 0) this.y = canvas.height;
+    }
+
+    draw(){
+
+        ctx.save();
+
+        ctx.translate(this.x, this.y);
+        ctx.rotate(this.rotation * Math.PI / 180);
+
+        ctx.globalAlpha = this.opacity;
+
+        // Purple glow
+        ctx.shadowBlur = 20;
+        ctx.shadowColor = "#b400ff";
+
+        // Crystal color
+        ctx.fillStyle = "#bb66ff";
+
+        // Shard shape
+        ctx.beginPath();
+        ctx.moveTo(0, -this.size);
+        ctx.lineTo(this.size / 2, 0);
+        ctx.lineTo(0, this.size);
+        ctx.lineTo(-this.size / 2, 0);
+        ctx.closePath();
+
+        ctx.fill();
+
+        ctx.restore();
+    }
+
+}
+
+for(let i = 0; i < 80; i++){
+
+    shards.push(new Shard());
+
+}
+
+function drawVoidBackground(){
+
+    // Dark void gradient
+    const gradient = ctx.createRadialGradient(
+        canvas.width/2,
+        canvas.height/2,
+        100,
+        canvas.width/2,
+        canvas.height/2,
+        canvas.width
+    );
+
+    gradient.addColorStop(0, "#160022");
+    gradient.addColorStop(0.5, "#080010");
+    gradient.addColorStop(1, "#000000");
+
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+
+}
+
+function animate(){
+
+    drawVoidBackground();
+
+    for(let shard of shards){
+
+        shard.update();
+        shard.draw();
+
+    }
+
+    requestAnimationFrame(animate);
+
+}
+
+animate();
+
+window.addEventListener("resize", () => {
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+});
+
+document.addEventListener("keydown", (event) => {
+
+    if(event.key === "Enter"){
+
+        alert("Entering The Void...");
+
+        // Start game code here
+
+    }
+
+});
+
+</script>
+
+</body>
+</html>
