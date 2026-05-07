@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Sonic Seasons - Episode 1 Intro</title>
+
+<style>
+
+body{
+    margin:0;
+    overflow:hidden;
+    background:black;
+}
+
+canvas{
+    display:block;
+    background:linear-gradient(#5ecbff, #bdefff);
+}
+
+#cutsceneText{
+    position:absolute;
+    bottom:40px;
+    width:100%;
+    text-align:center;
+    color:white;
+    font-size:32px;
+    font-family:Arial;
+    text-shadow:0 0 10px black;
+}
+
+</style>
+</head>
+
+<body>
+
+<canvas id="gameCanvas"></canvas>
+<div id="cutsceneText">EPISODE 1 - GREEN HILL AWAKENS</div>
+
+<script>
+
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let sonic = {
+    x:-200,
+    y:canvas.height - 180,
+    speed:8
+};
+
+let eggman = {
+    x:canvas.width + 200,
+    y:120
+};
+
+let frame = 0;
+
+function drawBackground(){
+
+    // Sky
+    ctx.fillStyle = "#6ad6ff";
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+
+    // Mountains
+    ctx.fillStyle = "#3ca55c";
+
+    for(let i = 0; i < canvas.width; i += 200){
+
+        ctx.beginPath();
+        ctx.moveTo(i, canvas.height - 150);
+        ctx.lineTo(i + 100, canvas.height - 320);
+        ctx.lineTo(i + 200, canvas.height - 150);
+        ctx.fill();
+
+    }
+
+    // Grass
+    ctx.fillStyle = "#29b34a";
+    ctx.fillRect(0, canvas.height - 150, canvas.width, 150);
+
+}
+
+function drawSonic(){
+
+    // Body
+    ctx.fillStyle = "#0066ff";
+    ctx.beginPath();
+    ctx.arc(sonic.x, sonic.y, 40, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Shoes
+    ctx.fillStyle = "red";
+    ctx.fillRect(sonic.x - 30, sonic.y + 30, 20, 10);
+    ctx.fillRect(sonic.x + 10, sonic.y + 30, 20, 10);
+
+}
+
+function drawEggman(){
+
+    // Hover machine
+    ctx.fillStyle = "gray";
+    ctx.beginPath();
+    ctx.ellipse(eggman.x, eggman.y, 70, 40, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Cockpit
+    ctx.fillStyle = "red";
+    ctx.fillRect(eggman.x - 25, eggman.y - 20, 50, 40);
+
+    // Window
+    ctx.fillStyle = "#99ffff";
+    ctx.fillRect(eggman.x - 15, eggman.y - 10, 30, 20);
+
+}
+
+function updateCutscene(){
+
+    frame++;
+
+    // Sonic runs in
+    if(sonic.x < canvas.width / 3){
+
+        sonic.x += sonic.speed;
+
+    }
+
+    // Eggman flies in later
+    if(frame > 120 && eggman.x > canvas.width - 250){
+
+        eggman.x -= 5;
+
+    }
+
+    // Dialogue changes
+    const text = document.getElementById("cutsceneText");
+
+    if(frame < 120){
+
+        text.textContent = "SONIC ENTERS GREEN HILL...";
+
+    }
+    else if(frame < 260){
+
+        text.textContent = "DR. EGGMAN APPEARS!";
+
+    }
+    else{
+
+        text.textContent = "GET READY!";
+
+    }
+
+}
+
+function gameLoop(){
+
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+
+    drawBackground();
+    updateCutscene();
+
+    drawSonic();
+    drawEggman();
+
+    requestAnimationFrame(gameLoop);
+
+}
+
+gameLoop();
+
+window.addEventListener("resize", () => {
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+});
+
+</script>
+
+</body>
+</html>
