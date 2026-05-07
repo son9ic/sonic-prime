@@ -1,0 +1,145 @@
+// =======================
+// BLUETOOTH GAMEPAD SYSTEM
+// =======================
+
+// Camera
+let camera = {
+    x: 0,
+    y: 0
+};
+
+// Detect controller automatically
+window.addEventListener("gamepadconnected", (event) => {
+
+    console.log("Bluetooth Controller Connected!");
+
+    gamepadIndex = event.gamepad.index;
+
+    document.getElementById("cutsceneText").textContent =
+        "CONTROLLER CONNECTED";
+
+});
+
+window.addEventListener("gamepaddisconnected", () => {
+
+    console.log("Controller Disconnected");
+
+    gamepadIndex = null;
+
+});
+
+// Main controller update
+function updateController(){
+
+    if(gamepadIndex === null) return;
+
+    const gamepad = navigator.getGamepads()[gamepadIndex];
+
+    if(!gamepad) return;
+
+    // =======================
+    // LEFT STICK MOVEMENT
+    // =======================
+
+    const moveX = gamepad.axes[0];
+    const moveY = gamepad.axes[1];
+
+    // Deadzone
+    if(Math.abs(moveX) > 0.15){
+
+        sonic.x += moveX * sonic.speed;
+
+    }
+
+    if(Math.abs(moveY) > 0.15){
+
+        sonic.y += moveY * sonic.speed;
+
+    }
+
+    // =======================
+    // RIGHT STICK CAMERA
+    // =======================
+
+    const lookX = gamepad.axes[2];
+    const lookY = gamepad.axes[3];
+
+    if(Math.abs(lookX) > 0.1){
+
+        camera.x += lookX * 8;
+
+    }
+
+    if(Math.abs(lookY) > 0.1){
+
+        camera.y += lookY * 8;
+
+    }
+
+    // Camera limits
+    camera.x = Math.max(-300, Math.min(300, camera.x));
+    camera.y = Math.max(-150, Math.min(150, camera.y));
+
+    // =======================
+    // BUTTONS
+    // =======================
+
+    // A / X Button = Jump
+    if(gamepad.buttons[0].pressed){
+
+        sonic.y -= 7;
+
+    }
+
+    // Start Button = Pause
+    if(gamepad.buttons[9].pressed){
+
+        paused = true;
+
+        document.getElementById("pauseMenu").style.display =
+            "block";
+
+    }
+
+}function drawCave(){
+
+    ctx.save();
+
+    // Camera movement
+    ctx.translate(-camera.x, -camera.y);
+
+    // Cave background
+    ctx.fillStyle = "#0a0014";
+    ctx.fillRect(
+        -500,
+        -500,
+        canvas.width + 1000,
+        canvas.height + 1000
+    );
+
+    // Cave floor
+    ctx.fillStyle = "#1d1d2e";
+
+    for(let i = -500; i < canvas.width + 500; i += 150){
+
+        ctx.fillRect(
+            i,
+            canvas.height - 120,
+            120,
+            120
+        );
+
+    }
+
+    // Purple fog
+    ctx.fillStyle = "rgba(180,0,255,0.12)";
+    ctx.fillRect(
+        -500,
+        -500,
+        canvas.width + 1000,
+        canvas.height + 1000
+    );
+
+    ctx.restore();
+
+}
