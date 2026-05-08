@@ -1,0 +1,79 @@
+import pygame
+import sys
+
+pygame.init()
+
+# Window
+WIDTH = 960
+HEIGHT = 540
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption("Sonic Episode 3")
+
+clock = pygame.time.Clock()
+
+# Colors
+SKY = (120, 200, 255)
+GROUND = (50, 180, 70)
+BLUE = (0, 90, 255)
+
+# Sonic
+sonic_x = 100
+sonic_y = 350
+sonic_width = 50
+sonic_height = 50
+
+velocity_y = 0
+gravity = 0.7
+jump_power = -14
+
+speed = 6
+on_ground = False
+
+ground_y = 400
+
+running = True
+
+while running:
+    clock.tick(60)
+
+    # Events
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+
+    # Controls
+    keys = pygame.key.get_pressed()
+
+    if keys[pygame.K_LEFT]:
+        sonic_x -= speed
+
+    if keys[pygame.K_RIGHT]:
+        sonic_x += speed
+
+    if keys[pygame.K_SPACE] and on_ground:
+        velocity_y = jump_power
+        on_ground = False
+
+    # Gravity
+    velocity_y += gravity
+    sonic_y += velocity_y
+
+    # Ground collision
+    if sonic_y + sonic_height >= ground_y:
+        sonic_y = ground_y - sonic_height
+        velocity_y = 0
+        on_ground = True
+
+    # Draw
+    screen.fill(SKY)
+
+    # Ground
+    pygame.draw.rect(screen, GROUND, (0, ground_y, WIDTH, HEIGHT - ground_y))
+
+    # Sonic
+    pygame.draw.rect(screen, BLUE, (sonic_x, sonic_y, sonic_width, sonic_height))
+
+    pygame.display.flip()
+
+pygame.quit()
+sys.exit()
